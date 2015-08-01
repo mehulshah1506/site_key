@@ -28,6 +28,11 @@ function get_page_json($site_api_key, $page_nid) {
 
 /**
  * Helper function to get type of node
+ * 
+ * @nid
+ * Node Id of any content type
+ * 
+ * returns Type of node
  */
 function _get_node_type_from_node_id($nid) {
   $query = db_select('node', 'n');
