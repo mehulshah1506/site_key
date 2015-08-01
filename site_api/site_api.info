@@ -1,0 +1,6 @@
+name = Sites API 
+description = Provides API which responds "Page" content types data in JSON format.   
+core = 7.x
+package = Webservices
+dependencies[] = system
+configure = admin/config/system/site-information

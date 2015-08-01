@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function site_api_form_system_site_information_settings_alter(&$form, &$form_state, $form_id) {
+  $siteapikey = variable_get('siteapikey', 'No API Key yet');
+  $form['site_information']['siteapikey'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site API Key'),
+    '#default_value' => $siteapikey,
+    '#required' => TRUE
+  );
+  if ($siteapikey != 'No API Key yet') {
+    $form['actions']['submit']['#value'] = 'Update Configuration';
+  }
+  array_unshift($form['#submit'], 'site_api_key_submit');
+  array_unshift($form['#validate'], 'site_api_key_validate');
+}
+
+
+/**
+ * Validate Handler for Site API Key Field().
+ */
+function site_api_key_validate($form, &$form_state) {
+  $siteapikey = variable_get('siteapikey', 'No API Key yet');
+  if ($form_state['values']['siteapikey'] != $siteapikey) {
+    if(preg_match('/\s/', $form_state['values']['siteapikey'])) {
+      form_set_error('siteapikey', 'Spaces can not be part of Site API Key');
+    }
+  }
+}
+
+/**
+ * Submit Handler for Site API Key Field().
+ */
+function site_api_key_submit($form, &$form_state) {
+  $siteapikey = variable_get('siteapikey', 'No API Key yet');
+  if ($form_state['values']['siteapikey'] != $siteapikey) {
+    drupal_set_message('The Site API Key has been saved with "' . $form_state['values']['siteapikey'] . '"');
+  }
+  else {
+    drupal_set_message('The Site API Key has not been updated');
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function site_api_menu() {
+  $items['page_json/%/%'] = array(
+    'title' => t('Page Json Data'),
+    'description' => t('Return Json Data for node of content type "Page"'),
+    'page callback' => 'get_page_json',
+    'page arguments' => array(1, 2),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'site_api_json.inc',
+  );
+  return $items;
+}
